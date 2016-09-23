@@ -1,13 +1,11 @@
-# styleguide
+# Code patterns
 
-This is our HTML, CSS and JavaScript style guide. This guide contains feelings, thoughts and code from another's very good style guides. 
-In [our company](http://shareprime.com.br), you have to keep this principles for your coding. It will maitain a great quality in our code, and it will be easy to another people complements your code.
+This is our HTML, CSS and JavaScript style guide. This guide contains feelings, thoughts and code from another's very good style guides. In [our company](http://shareprime.com.br), you have to keep this principles for your coding. It will maitain a great quality in our code, and it will be easy to another people complements your code.
 
-## HTML Coding Style
+## General definitions
 
 ### Protocols
-Omit the protocol portion (http:, https:) from URLs pointing to images and other media files, style sheets, and scripts unless the respective files are not available over both protocols.
-Omitting the protocol—which makes the URL relative—prevents mixed content issues and results in minor file size savings.
+Omit the protocol portion (http:, https:) from URLs pointing to images and other media files, style sheets, and scripts unless the respective files are not available over both protocols. Omitting the protocol—which makes the URL relative—prevents mixed content issues and results in minor file size savings.
 
 ```
 <!-- Not recommended -->
@@ -17,18 +15,78 @@ Omitting the protocol—which makes the URL relative—prevents mixed content is
 <!-- Recommended -->
 <script src="//www.google.com/js/gweb/analytics/autotrack.js"></script>
 ```
+
+### Indentation
+
+Use 1 tab at a time. Don't mix tabs and spaces for indentation.
+
+### Capitalization
+
+Use only lowercase. Always.
+
+###Trailing Whitespace
+
+Remove trailing white spaces. Trailing white spaces are unnecessary and can complicate diffs.
+
 ```
-/* Not recommended */
-.example {
-  background: url(https://www.google.com/images/example);
-}
+<!-- Not recommended -->
+<p>What?  </p>
+<!-- Recommended -->
+<p>Yes please.<p>
+```
+
+### General Meta Rules
+
+#### Encoding
+
+Use UTF-8 (no BOM).
+
+### Comments
+
+Explain code as needed, where possible. Use comments to explain code: What does it cover, what purpose does it serve, why is respective solution used or preferred? (This item is optional as it is not deemed a realistic expectation to always demand fully documented code. Mileage may vary heavily for HTML and CSS code and depends on the project’s complexity.)
+
+### TO-DO
+
+Mark todos and action items with TODO. Highlight todos by using the keyword TODO only, not other common formats like @@. Append a contact (username or mailing list) in parentheses as with the format TODO(contact). Append action items after a colon as in TODO: action item.
+
+```
+{# TODO(john.doe): revisit centering #}
+<center>Test</center>
 ```
 ```
-/* Recommended */
-.example {
-  background: url(//www.google.com/images/example);
-}
+<!-- TODO: remove optional tags -->
+<ul>
+  <li>Apples</li>
+  <li>Oranges</li>
+</ul>
 ```
+
+## HTML Coding Style
+
+### Document Type
+
+Use HTML5. Only HTML5. HTML5 (HTML syntax) is preferred for all HTML documents: ```<!DOCTYPE html>```.
+
+### HTML Validity
+
+Use valid HTML where possible. Use valid HTML code unless that is not possible due to otherwise unattainable performance goals regarding file size. Use tools such as the [W3C HTML](https://validator.w3.org/nu/) validator to test. Using valid HTML is a measurable baseline quality attribute that contributes to learning about technical requirements and constraints, and that ensures proper HTML usage.
+
+### Semantics
+
+Use HTML according to its purpose.Use elements (sometimes incorrectly called “tags”) for what they have been created for. For example, use heading elements for headings, p elements for paragraphs, a elements for anchors, etc. Using HTML according to its purpose is important for accessibility, reuse, and code efficiency reasons.
+
+```
+<!-- Not recommended -->
+<div onclick="goToRecommendations();">All recommendations</div>
+```
+```
+<!-- Recommended -->
+<a href="recommendations/">All recommendations</a>
+```
+
+
+
+
 
 ## CSS Coding Style
 
@@ -76,63 +134,3 @@ Elements that occur **exactly once** inside a page should use IDs, otherwise, us
 - When modifying an existing element for a specific use, try to use specific class names. Instead of `.listings-layout.bigger` use rules like `.listings-layout.listings-bigger`. Think about ack/greping your code in the future.
 - Key (rightmost) Selectors should be as specific as possible. For example `a.navigation-link` instead of `#navigation-links a`. This has [performance implications](http://www.stevesouders.com/blog/2009/06/18/simplifying-css-selectors/).
 
-## Less Guidelines
-
-If you aren't familiar with Less, [check out the documentation](http://lesscss.org/).
-
-- Branding items such as colors and pixel measurements for font sizes should always be placed in a variable, either in `shared-package/variables.less` or local to your stylesheet where applicable. Look for a variable before defining your own.
-- Any `@variable` or `.mixin` that is used in more than one file should be put in the appropriate package or, if used across packages, in variables.less or mixins.less in shared-package. Others should be put at the top of the file where they're used.
-- Don't nest further than 4 levels deep. If you find yourself going further, think about reorganizing your rules (either the specificity needed, or the layout of the nesting).
-
-```less
-/*
- * This is a good example of rule nesting with Less.
- */
-.third-format {
-    background: @transparentGray;
-    border: 1px solid @green;
-    color: @black;
-    margin: 0;
-
-    .next-rule {  // outputs: .third-format .next-rule {...}
-        color: @white;
-    }
-
-    &.next-rule {  // outputs: .third-format.next-rule {...}
-        color: @lightGray;
-    }
-
-    > .next-rule {  // outputs: .third-format > .next-rule {...}
-        color: @red;
-    }
-}
-```
-
-- If you are creating mixins that don't take parameters in a file that is going to be imported elsewhere (e.g. `shared-package/mixins.less`), include an empty parameter list to guard against the class being output each time the file is imported.
-
-```less
-.parameterless-mixin-in-an-imported-less-file() {
-    /* The empty parameter list allows the mixin to be used without
-     * params and prevents the Less compiler from spitting it out
-     * each time the file is imported
-     */
-    background: @transparentGray;
-}
-```
-
-## Pixels vs. Ems
-
-Use `px` for `font-size`, because it offers absolute control over text. **You should almost never have to define a font-size for anything**. If you feel the need to do it, stop yourself and look through existing shared styles for an applicable class.
-
-## File Structure
-
-If you are adding Less files to a package you are working on, add only a single Less file to the list in packages.py that imports all of the required files like this:
-
-```scss
-@import "../shared-package/variables.less";
-@import "../shared-package/mixins.less";
-@import "my-new-package-file.less";
-@import "my-second-package-file.less";
-```
-
-With this approach, all imports are done in this file. This prevents duplications in the compiled CSS that are caused by cascading imports of the same file.
